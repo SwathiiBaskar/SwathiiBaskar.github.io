@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>The Web Universe</title>
+        <style>
+            body{
+                background-color: black;
+                color: whitesmoke;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>The Web Universe</h1>
+        <h2>Build the deepest possible intuition on what actually happens from the moment you type a URL until the webpage appears.</h2>
+        <p>Beginning with a very basic question! What is the Web? <br>Did u just say Internet or Google😂<br><br>To explain in simple technical terms, Web is a <i>giant communication system </i> where the <strong>Browser </strong>asks for files and the <strong>Server </strong>sends them back</p>
+        <p>But today, we are going beneath the surface to see how this really works in practice. Let's get started!</p>
+        <p>Lets say you type a URL: https://example.com</p>
+        <p>A URL(Uniform Resource Allocator) tells the Browser where to go and how to get a resource from the Server or in other words Its just where the website lives online.<br><br>A URL has multiple components. It could be typically of the form: </p>
+        <h4><blockquote>protocol://domain:port/path?query_string#fragment</blockquote></h4>
+        <p>Looks confusing? Not really until broken down!</p>
+        <p>Let me try explaining with an example, Say our URL is something like: <br><blockquote>https://example.com:9000/products/list?category=shoes&sort=price#reviews</blockquote></p>
+        <p>The Browser parses this URL, separates Protocol, Extract Domain/Host, Extracts Port(if present), extracts Path and does the Optional Parsing (Checking for query parameters, fragments)</p>
+        <table border="1">
+            <tr>
+                <th>Component</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>Protocol/Scheme</td>
+                <td>https</td>
+            </tr>
+            <tr>
+                <td>Domain/Host</td>
+                <td>example.com</td>
+            </tr>
+            <tr>
+                <td>Port</td>
+                <td>9000</td>
+            </tr>
+            <tr>
+                <td>Path</td>
+                <td>/products/list</td>
+            </tr>
+            <tr>
+                <td>Query string</td>
+                <td>category=shoes&sort=price</td>
+            </tr>
+            <tr>
+                <td>Fragment</td>
+                <td>reviews</td>
+            </tr>
+        </table>
+        <p>Do u see that the URL has been broken down into components? This is exactly what the URL Parser in your browser does too. The Browser is the one that implements the URL Parser</p>
+        <p>But how does URL Parser do this? Simple! URL Parser usually is a Static Machine that just reads character by character from left, Identifies <strong>Scheme </strong>until <strong> : </strong>Looks for '//' that indicates the Authority section (Domain/Host + optional Port), Then reads characters until '/','?','#' and extract Host, Optionally: extract port if ':' appears after Host, Everything after Host from '/' (if present) to '?' or '#' is perceived as Path, If '?' is present, then it is read as Query string and if '#' is present whatever that comes after is read as Fragment.</p>
+        <p>Yeah i hear you screaming! Wondering what these alien terms (Protocol, Domain, Port.....) are?</p>
+        <ul>
+            <li><strong>Protocol/Scheme:</strong> A protocol (https in our example) determines how to communicate with the Server, Each protocol is a set of rules on how to communicate with the Server<br> 
+            <ol>
+                <li>HTTP (HyperText Transfer Protocol): Used for normal webpages without encryption (Data is sent in plain text)</li>
+                <li>HTTPS (HyperText Transfer Protocol Secure): Same as HTTP but Data is <i>encrypted</i> here</li>
+                <li>FTP (File Transfer Protocol): Used for uploading/downloading files.</li>
+                <li>SFTP (Secured File Transfer Protocol): Encrypted version of FTP </li>
+                <li>SSH (Secure Shell): A cryptographic network protocol used for secure remote login and comman execution over insecure networks. </li>
+                <li>SCP (Secure Copy Protocol): Used for securely transferring files between computers by leveraging the SSH protocol for encryption and authentication</li>
+                <li>SMTP (Standard Mail Transfer Protocol): Used for sending and routing email messages across the internet.</li>
+                <li>SMTPS: Encrypted version of SMTP</li>
+                <li>WS (Web Socket Protocol): Used for real-time communication in web 
+                applications.</li>
+                <li>WSS: Secure Web Socket Protocol (Encryped version of WS)</li>
+            </ol><br></blockquote>So what's the conclusion? Now the Browser essentially knows how to handle the resource, not just the location from the URL. Without a protocol, the Browser wouldn't know how to <strong>Request</strong> or <strong> Receive</strong> data<br>Today our primary focus will be just to explore the http protocol.
+            </li>
+            <br>
+            <li><strong>Domain: </strong>A Domain is a human-readable name for a resource on the internet. <strong>example.com</strong> is a Domain name. A full host in a URL can be a subdomain like <strong>www.example.com</strong> or <strong>api.us.example.com</strong> Domains are <i>names</i> and not <i>addresses</i>. However Routers need IPs(addresses) to deliver packets. So who does the Translation? It is <strong>DNS</strong>. We will discuss about <strong>DNS LOOKUP </strong>in detail in the later part of the section.</li>
+            <br>
+            <li><strong>Port: </strong>A server(like example.com) can host multiple services (applications) on the same machine where each service would use a different port to avoid conflicts. Port tells the Server OS which application should handle which incoming request. Without ports, <strong>only one service could run per IP.</strong> Suppose there is a server with IP: 203.0.113.10, on this server, we can run many different services:<br><br><table border="1">
+                <tr>
+                    <th>Service</th>
+                    <th>Port</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>Website (HTTP)</td>
+                    <td>80</td>
+                    <td>http://203.0.113.10</td>
+                </tr>
+                <tr>
+                    <td>Secure website (HTTPS)</td>
+                    <td>443</td>
+                    <td>https://203.0.113.0</td>
+                </tr>
+                <tr>
+                    <td>FTP File Server</td>
+                    <td>21</td>
+                    <td>ftp://203.0.113.10</td>
+                </tr>
+                <tr>
+                    <td>SSH Remote Login</td>
+                    <td>22</td>
+                    <td>Used in terminal, not in browser</td>
+                </tr>
+                <tr>
+                    <td>Custom App</td>
+                    <td>8080</td>
+                    <td>A chat application running on http://example.com:8080 or http://203.0.113.10:8080</td>
+                </tr>
+            </table><br>The conclusion? With ports, The user can visit the websites (Browser connects to port 443), Someone can upload files to the same machine (Browser connexts to port 21), Developer can log in to manage the server (Browser connects to port 22), An internal tool (like a dashboard) can run on the very same machine.<br><br> So it is <strong>One server, One IP, Many ports, Many services, All working together.</strong></li>
+            <br>
+            <li><strong>Path: </strong>A specific resource/file to request on the server. If no path is specified, and the browser sees '/', the default path, <i>Home page</i> is requested.</li>
+            <br>
+            <li><strong>Query string: </strong>It contains <strong>key=value</strong> pairs that provide extra information to the Server. The '?' starts the query string and '&' separates multiple parameters. Use cases: 
+            <section><blockquote>-> Filtering, Sorting, Pagination (eg.,  ?page=2&sort=price_asc)</blockquote></section>
+            <section><blockquote>-> Search queries (eg.,  ?q=blue+shoes)</blockquote></section>
+            <section><blockquote>-> API calls / endpoints: often used in GET requests (e.g., ?limit=50&offset=100)</blockquote></section>
+        </li>
+        <li><strong>Fragment:</strong> Browser scrolls or jumps to a part of the page (example: #section1). It is never sent to the server. Purely client-side only.</li>
+        </ul>
+        <h3>DNS LOOKUP</h3>
+        <p>Once the URL is parsed(example.com), the browser cannot connect directly to a human-readable name. It needs a <strong>numeric IP address</strong>to locate the server.<br>The DNS (Domain Name System) is a distributed, hierarchial, database system that maps <strong>human-readable domain names -> machine usable IP addresses</strong>. This process DNS Lookup, is thus finding the server, a Domain corresponds to.
+        </p>
+        <p>Maybe think of it like, knowing a person's name ("Swathi"), but you need their <strong>Home address </strong>to visit them.
+        </p>
+        <h4><strong>What happens inside the browser during DNS Lookup?</strong></h4>
+        <dl>
+            <dt>Browser checks cache first</dt>
+            <dd>Modern browsers have a DNS cache. The recently visited domains and their corresponding IPs reside in that cache. For example, if you recently visited <i>example.com</i>, your browser already knows the IP, so no lookup needed. If cached, <strong>DNS Resolution</strong> ends here.</dd>
+            <dt>OS-level cache</dt>
+            <dd>Your Operating System also keeps DNS entries. So if not in the browser, your Operating System (Windows, macOS, Linux) checks its DNS cache. If found, IP is returned, else Host file is checked.</dd>
+            <dt>Hosts file check</dt>
+            <dd>Every system has a local file (C:\Windows\System32\drivers\etc\hosts on Windows) mapping some domains to IPs. If mapping exists, it bypasses DNS completely.</dd>
+            <dt>Query sent to DNS Server</dt>
+            <dd>If all local check fails, and IP still remains unknown, your OS sends a DNS query to your DNS resolver. The resolver performs the actual <strong>DNS Lookup.</strong></dd>
+        </dl>
+
+        <h4>DNS RESOLVER</h4>
+        <p>When during each of the checks(Browser cache, OS cache and Hosts file), if domain was not cached, your OS would have sent a DNS query over internet to your DNS server.</p>
+        <p>Here is something important to understand: Your Internet Service Provider (BSNL Broadband, Airtel Xstream, JioFiber etc:-) is indeed the one that gives your internet connection. These companies run their own DNS servers for customers and thus provide DNS servers for customers. But why do ISPs provide DNS servers? Because every device on their network needs DNS. Everytime you connect to the internet, your ISP gives you: </p>
+        <ul>
+            <li>an IP address</li>
+            <li>Gateway</li>
+            <li>DNS server addresses</li>
+        </ul>
+        <p>and this is done automatically via DHCP (Dynamic Host Configuration Protocol). So your device learns your DNS server that belong to your ISP. However this can be changed. You can override ISP DNS and manually set a public DNS Google or Cloudflare or Quad9 as your DNS Server. Some companies like Google, Quad9(Security-focused) and all provide free DNS server for anyone in the world.</p>
+        <p>If you never changed anything, your ISP tells your computer your DNS server and your DNS queries go to ISP's DNS Server automatically. So whatever your DNS Server maybe, It receives a request ultimately. </p>
+        <fieldset>
+            <legend>Query</legend>
+            A record for example.com
+        </fieldset>
+        <p>Your ISP or public DNS is called <strong>Recursive DNS</strong> and it checks its cache. If cached -> IP is returned immediately. If not, <br></p>
+        <p>Recursive DNS queries the <strong>root DNS Server.</strong> There are 13 root server clusters worldwide (A root -> M root). Root server doesn't know IP directly because it is impossible to store all domains directly. As of now, there are 364 million registered domains and a recent survey stated that, every hour, thousand new domains are created. Also DNS is a hierarchy and not flat database. DNS follows: </p>
+        <fieldset>
+            Root → TLD → Authoritative server → Final records
+        </fieldset>
+        <p>but what does root DNS Server even know? It knows where the <strong>.com TLD (Top Level Domain - The suffix at the end of a web address like .com, .gov, .edu) Server is.</strong> Recursive DNS, now queries the <strong>TLD .com Server</strong></p>
+        <p>Again TLD DNS also cannot contain the IP directly because it again manages millions of domains. It only stores pointers to authoritative name servers for each domain. TLD .com Server responds with the authoritative name server configured by the domain owner. It says: </p>
+        <fieldset>
+            NS1.example-dns.net.
+            NS2.example-dns.net.
+        </fieldset>
+        <p>So the authoritative DNS servers for example.com are located at these host names.<br>The NS1.example-dns.net is just a hostname that points to a DNS server machine. Behind it, is a real server with a real IP like: NS1.example-dns.net → 203.0.113.10.<br><br> NS1, NS2 are all just naming conventions. NS1 -> First server, NS2 -> Second server. Domains typically have atlease 2 authoritative name servers for reliability.</p>
+        <p>This final authoritative name server actually stores DNS records for a domain which includes the IP address. </p>
+        <p>DNS Resolver caches this response. The IP is cached for X seconds (TTL value).</p>
+        <h4>OS Caches -> Browser Caches -> Translation done!</h4>
+        <p>Everyone stores it until TTL expires</p>
+        <h3>Establish connection (TCP Handshake)</h3>
+        <p>TCP stands for <strong>Transmission Control Protocol</strong>. This ensures, reliable, ordered, error-checked delivery of data between applications(Server/Client)on a network. The communication between appliations is managed by Internet Protocol (IPs). The data is not set entirely, but broken down as packets and are reassembled correctly at the destination. It can be called as a Transport protocol that exchanges HTTP bytes reliably between Browser and Server</p>
+        <h4>But what is a TCP Handshake?</h4>
+        <p>When i say, the Browser and the Server wants to exchange data by establishing connection, They can't just send and receive data from eachother.</p>
+        <ul>
+            <li>They need to agree that they both want to talk</li>
+            <li>Reserve resources</li>
+            <li>Synchrosise sequence numbers</li>
+            <p>But what are <strong>Sequence numbers?</strong> Sequence numbers are responsible for uniquely identifying each byte in a TCP connection.</p>
+            <p>1001 → byte #1
+                <br>
+            1002 → byte #2
+            <br>
+            1003 → byte #3
+            <br>
+            ....</p>
+        </ul>
+        <p>The TCP handshake is a three-way handshake that exactly does this</p>
+        <ul>
+            <li>SYN</li>
+            <li>SYN-ACK</li>
+            <li>ACK</li>
+        </ul>
+        <p>Assume Browser (client) IP: 10.0.0.2, dynamic client port: 49152</p>
+        <p>Also assume that Server IP: 93.184.216.34, server port: 443 (HTTPS)</p>
+        <ol>
+            <li>Client -> Server : SYN</li>
+            <p>
+                <h4>TCP header files:</h4>
+                <strong>TCP Flags:</strong> SYN=1 (And that means, Client and Server both intend to synchronise sequence numbers and establish connection)
+                <br>
+                <br>
+                Client picks an <strong>Initial Sequence Number(ISN)</strong>. Example, ISN_c=1000
+                <br>
+                <br>
+                <strong>src:</strong> 10.0.0.2:49152 (Source IP with Port)
+                <br>
+                <br>
+                <strong>des:</strong> 93.184.216.34:443(Destination IP with Port)
+                <br>
+                <br>
+                <strong>seq</strong>=1000 (The ISN picked by client)
+                <br>
+                <br>
+                <strong>ack</strong>=0 (During the first packet of handshake, client is not acknowledging any data from the server (Because the server has not sent anything yet))
+                <br>
+                <strong>flags</strong>=SYN
+                <br>
+            </p>
+            <p>So ultimately, what happens here is, the client opens a TCP connection and tells the server that the sequence number it picked is 1000.</p>
+            <li>Server -> Client: SYN-ACK</li>
+            <p>
+                <h4>TCP header files:</h4>
+                <strong>TCP Flags:</strong> SYN=1, ACK=1(The sender is presenting its own sequence number and so SYN=1 and also acknowledging the client's sequence number and therefore ACK=1)
+                <br>
+                <br>
+                Server also picks an <strong>Initial Sequence Number(ISN)</strong>. Example, ISN_s=40000
+                <br>
+                <br>
+                <strong>src:</strong> 10.0.0.2:49152 (Source IP with Port)
+                <br>
+                <br>
+                <strong>des:</strong> 93.184.216.34:443(Destination IP with Port)
+                <br>
+                <br>
+                <strong>seq</strong>=40000 (The ISN picked by server)
+                <br>
+                <br>
+                <strong>ack</strong>=ISN_c+1=1001 (TCP acknowledges bytes and not packets. Sequence numbers are simply byte-counters. And the SYN flag consumes 1 byte in sequence number space even though it is not real data. So technically server acknowledges client SYN,that it has received the "virtual byte" at 1000, and the next expected position is 1001)
+                <br>
+                <br>
+                <strong>flags</strong>=SYN
+                <br>
+                <p>In simple terms, the server accepts client's request. Exchanges its ISN, and acknowledges client's ISN(1000 -> 1001)
+                </p>
+            </p>
+            <li>Client -> Server : ACK</li>
+            <p>
+                <h4>TCP header files:</h4>
+                <strong>TCP Flags:</strong> ACK=1 (Client is acknowledging Server's ISN)
+                <br>
+                <br>
+                <strong>src:</strong> 10.0.0.2:49152 (Source IP with Port)
+                <br>
+                <br>
+                <strong>des:</strong> 93.184.216.34:443(Destination IP with Port)
+                <br>
+                <br>
+                <strong>seq</strong>=ISC_c + 1=1001 (client's next seq; no payload yet).
+                <br>
+                <br>
+                <strong>ack</strong>=ISN_s+1=40001 (So technically client acknowledges that it has received the "virtual byte" at 40000, and the next expected position is 40001. Server's SYN is acknowledged)
+                <br>
+                <br>
+                <strong>flags</strong>=ACK
+                <br>
+                <p>So here, Client says that it has gotten Server's SYN and ISN.
+                </p>
+            </p>
+        </ol>
+        <h4>CONNECTION ESTABLISHED!</h4>
+        <p>So what next?</p>
+        <h4>Send HTTP Request for which Server Responds</h4>
+        <p>Once TCP connection is established (SYN -> SYN-ACK -> ACK), the browser can now send data over it. This data is the <strong>HTTP Request</strong>.</p>
+        <p>A typical HTTP request would look something like: </p>
+        <br>
+        <table>
+            <tr>
+            <th>GET / HTTP / 1.1</th>
+            </tr>
+            <tr>
+            <th>Host: example.com</th>
+            </tr>
+            <tr>
+            <th>User-Agent: Chrome</th>
+            </tr>
+        </table>
+        <br>
+        <p>The first line is the <strong>Request line</strong>, It has 3 parts: <strong>Method, Path and HTTP version</strong></p>
+        <ol>
+            <li>The method usually tells what action to perform. </li>
+        <table border="1">
+            <tr>
+                <th>METHOD</th>
+                <th>Meaning</th>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>Used to retreive a resource (HTML, CSS, Image, JSON)</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td>Used to send data (forms, login)</td>
+            </tr>
+            <tr>
+                <td>PUT</td>
+                <td>Replace something</td>
+            </tr>
+            <tr>
+                <td>PATCH</td>
+                <td>Update something</td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td>Remove something</td>
+            </tr>
+            <tr>
+                <td>HEAD</td>
+                <td>Only ask for headers, not full content.</td>
+            </tr>
+        </table>
+        <li>Path - '/': This specifies which resource on the server you want.</li>
+        <p>Examples: </p>
+        <ul>
+            <li>'/' -> homepage</li>
+            <li>'/style.css' -> CSS stylesheet</li>
+            <li>'/api/user' -> API endpoint</li>
+        </ul>
+        <p>In our example, GET / means "Give me the homepage file"</p>
+        <li>
+            HTTP version -> HTTP / 1.1 : Uses persistant connections, meaning Browser can send multiple requests without reconnecting everytime.
+        </li>
+        </ol>
+        <p>Headers are key-value pair, that gives more context about the requested file to the server.</p>
+        <fieldset>
+            Host: example.com
+            <br>
+            User-Agent: Chrome
+        </fieldset>
+        <p>There are 2 headers present here, <strong>Host</strong> and <strong>User-agent</strong></p>
+        <p>Host answers the question: "To whom am i sending the request?"</p>
+        <p>The User-agent tells the server about the browser you use, Its version, OS, and device type</p>
+        <h3>What happens right after browser send the Request?</h3>
+        <p>Server reads the request line (GET / HTTP / 1.1). Server then internally maps <strong>/var/www/html/index.html</strong>. Then it opens the file, read its content and prepare an <strong>HTTP response.</strong> Server now generates response body and header. It would look something like: </p>
+        <fieldset>
+            HTTP/1.1 200 OK
+            <br>
+            Content-Type: text/html
+            <br>
+            Content-Length: 1024
+            <br>
+            &lt;html&gt; ... &lt;/html&gt;
+        </fieldset>
+        <p>Now the Browser gets the HTML. Inside HTML a CSS script, or JS script or image could have been linked. And for each of the linked file, the browser performs, </p>
+        <p>GET /style.css
+            <br>
+        GET /app.js
+        <br>
+        GET /banner.png
+        <br>
+        <br>
+        A modern web-page can have:
+        <ul>
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>JS</li>
+            <li>Images</li>
+            <li>Fonts</li>
+            <li>Icons</li>
+            <li>APIs</li>
+        </ul>
+        And each one corresponds to a separate <strong>GET Request.</strong>
+        </p>
+        <h3>Browser parses HTML and builds DOM (Document Object Model)</h3>
+        <h3>Browser parses CSS and builds CSSOM (CSS Object Model)</h3>
+        <h3>DOM + CSSOM is what is called the <strong>Render tree</strong></h3>
+        <h3>Layout is designed, Pixels for color, text images are all painted, Then composited (layers are merged)</h3>
+        <p>(I hear you! I will write in-detail about DOM, CSSOM, Render Tree, The difference between Layouts and Styles, The working of Blink engine and a lot more in upcoming blogs! <strong>Stay tuned!</strong>)</p>
+        <h3>Browser has now finished all steps and Pixels are now painted on your screen. And thats the entire journey of a webpage!</h3>
+        <h3>So the next time you see a webpage loading, Jog your memory about the underhood layers (Documents + Protocols + Servers + Clients + Render Engines + Networks + Standards (HTML/CSS/JS) + Browsers)</h3>
+        <br>
+    </body>
+</html>
