@@ -21,7 +21,7 @@
         <ul>
             <li>So from the user's perspective, "DAMN! This website looks broken, not-trustable"</li>
             <li>From the developer's perspective, <strong>IT IS THE SAME CODE YAAR!</strong></li>
-        </ul>This was absolutely a great problem to all the develops there! With no other choice left out, they wrote websites that worked for the <strong>buggy browsers</strong> they had.</p>
+        </ul>This was absolutely a great problem to all the developers there! With no other choice left out, they wrote websites that worked for the <strong>buggy browsers</strong> they had.</p>
         <p>What exactly does this mean? Developers <strong>adapted their website to Browser bugs and that means they adjusted their layout until it looked correct in buggy browsers that they had, without knowing the behaviour was wrong.</strong> So the website's layout depended on that browser's bug. The bug thus became <strong>part</strong> of the website behaviour. But this would again make a website on a particular browser(as used by developer) to look perfectly. On a different browser, the website again looked different and eventually Browser specific hacks did appear. And that means, lets say, 
         <ul>
             <li>Browser A ignores an invalid rule</li>
@@ -73,7 +73,7 @@
     <p>So box becomes wider, layout shifts. Same HTML, Different result</p>
     <p>The conclusion? With that single line, you force the browser to render the html document in <strong>STANDARD MODE.</strong> Here is something important again to note: 
     <ul>
-        <li>It is not an HTML tag</li>
+        <li>It is not a HTML tag</li>
         <li>Not part of the DOM</li>
         <li>So not a node too</li>
         <li>It is not obviously rendered.</li>
@@ -132,7 +132,7 @@
     <li>Attribute node (class="x")</li>
     <li>Processing Instruction (XML-specific instruction nodes)</li>
 </ul>
-And don't worry it's mot rocket science. Each DOM node is just a <strong>C++ object, </strong>with <strong>pointers</strong> to parent and children and takes memory.</p>
+And don't worry it's not rocket science. Each DOM node is just a <strong>C++ object, </strong>with <strong>pointers</strong> to parent and children and takes memory.</p>
 
 <code><h2>&lt;html lang="en"&gt;</h2></code>
 <p>This is the root DOM node for all the upcoming nodes. lang is an attribute and lang="en" helps <strong>Browser translation algorithms.</strong> Since i had already explained the in-depth operation of a parser, not gonna repeat it again on how this would be parsed.</p>
@@ -140,7 +140,7 @@ And don't worry it's mot rocket science. Each DOM node is just a <strong>C++ obj
 <p>This is parsed before anything is rendered, because here is where we define the style. There is a huge differentiation between <i>style</i> and <i>layout</i>. Style is how an element appears on the screen and Layout is how an element is placed on the screen.</p>
 <code><h2>&lt;meta charset="UTF-8"&gt;</h2></code>
 <p>Encoding is how text is stored and understood by computer, UTF-8 supports all languages, emojis. This decides how characters are represented internally. Without this line, the browser guesses the encoding, which can fail for emojis, other languages, accented letters. But when i experimented, i noticed that most modern browsers guess the encoding right😅. So this line is optional. But a good developer goes for best practices, so you know what to do!</p>
-<p>Blink engine is the one that parses HTML into DOM and CSS into CSSOM, builds the render tree from DOM+CSSOM, performs layout (calculate sizes and positions of elements), paints and composite layers (draws the visible pixels we see)
+<p>Blink is the rendering engine used in Chrome-based browsers (Chrome, Edge, Opera). This blink engine is the one that parses HTML into DOM and CSS into CSSOM, builds the render tree from DOM+CSSOM, performs layout (calculate sizes and positions of elements), paints and composite layers (draws the visible pixels we see)
 How does blink engine parse <meta charset= > internally?<br> The same principle.
 The browser read .html as byte stream, Hello is stored as bytesH -> 0x48, e -> 0xC3 0xA9, l -> 0x6C.
 Blink looks for <meta charset> very early in the file so step 2 is determining encoding.
@@ -155,7 +155,7 @@ Not that: &lt;meta charset= &gt; shd be present within first 1024 bytes of teh d
 <code><h3>&lt;h1&gt;Hello World &lt;/h1&gt;</h3></code>When browser reads this, Blink engine immediately creates a DOM node, Attach it to the <strong>body.</strong> Create a layout box for it, and assign a <strong>default CSS user-agent stylesheet</strong> that has specific CSS rules. So even if you didnt write CSS, the browser already wrote some for you. </p>
 
 <p>h1 is a block level element meaning it starts on a new line and takes up the full width available. <br><br>Block level elements affects vertical flow layout, the stacking is vertical flow layout (Heading, then paragraph).<br><br>
-Inline elements are opposite to block level elements (Dont start on a new line, dont take up entire width, just sits with other elements on the row) span, strong, &lt;b&gt;, &lt;i&gt; are all inline elements.
+Inline elements are opposite to block level elements (Dont start on a new line, dont take up entire width, just sits with other elements on the row) &lt;span&gt;, &lt;strong&gt;, &lt;b&gt;, &lt;i&gt; are all inline elements.
 
 <p>So the next time you see a code that looks something like:
     <pre><code>&lt;!DOCTYPE html&gt;
