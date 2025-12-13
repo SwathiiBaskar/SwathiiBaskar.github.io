@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            LookUp
+        </title>
+        <style>
+            body{
+                background-color: black;
+                color:whitesmoke
+            }
+        </style>
+    </head>
+    <body>
+        <h1>HTML Document structure</h1>
+        <h2>Decoding everyline to the atmost possible depth you write with HTML, thinking "maybe it's just the set of rules to be followed"</h2>
+        <p>The very first line that you write when you create a HTML file: 
+        </p>
+        <pre><code><h2>&lt;!DOCTYPE html&gt;</h2></code></pre>
+        <p>You know what? Behind this single line you write as a developer, There is history screaming out! Here to unravel the mysteries. Time travelling to 1995-2003 period.<br><br> We know that the Browsers are the one that controls the Website and its not a website that controls the browser. Websites are just files sitting on the Server. A browser is the one that decides how the file should be rendered. But back then, <strong>different Browsers behaved differently!</strong> But what problem does it cause to developers? Browser A showed a layout differently and Browser B showed a layout differently. 
+        <ul>
+            <li>So from the user's perspective, "DAMN! This website looks broken, not-trustable"</li>
+            <li>From the developer's perspective, <strong>IT IS THE SAME CODE YAAR!</strong></li>
+        </ul>This was absolutely a great problem to all the develops there! With no other choice left out, they wrote websites that worked for the <strong>buggy browsers</strong> they had.</p>
+        <p>What exactly does this mean? Developers <strong>adapted their website to Browser bugs and that means they adjusted their layout until it looked correct in buggy browsers that they had, without knowing the behaviour was wrong.</strong> So the website's layout depended on that browser's bug. The bug thus became <strong>part</strong> of the website behaviour. But this would again make a website on a particular browser(as used by developer) to look perfectly. On a different browser, the website again looked different and eventually Browser specific hacks did appear. And that means, lets say, 
+        <ul>
+            <li>Browser A ignores an invalid rule</li>
+            <li>Browser B accepts it.</li>
+        </ul>
+    But developers did write that invalid rules on purpose, so that Browser A <i>skips </i>it, considering invalid rules as comments(if that's how the browser was deigned to ignore invalid rules). And Browser B <i>accepts</i> it. There was also something else happening as an evolution.<br> <br>Note that, the developer indeed wrote code that was rendered perfectly in the Browser they had (even if it was not the standard way to write it), but what about other browsers that rendered the same code? Obviously the layout and style <i>broke</i>. So there was something else under-the-hood happening too. </p>
+    <h3>USER-AGENT SNIFFING</h3>
+    <p>Kudos if you guessed it right! So what exactly is this? The browser that is rendering the website, sends it's name to the Server, and Server sent a different HTML/CSS scripts to every different browsers out there in that particular time.</p>
+    <p>This is not something to be encouraged too, because this would fail with new browsers, and was fragile logic.</p>
+    <p>U could ask me? Areyy bruhh they could have just introduced a standard rule to be followed, instead of adapting to all these confusions😂. Thats what initially i thought too. But here is the twist. Had they done that, millions of old websites would look broken. So the entire community was left with just 2 options.
+    <ul>
+        <li>Option 1: Fix bugs -> Follow standards</li>
+        <p><strong>Outcome? : </strong>Millions of old websites look broken.</p>
+        <li>Option 2: Keep bugs -> Ignore standards</li>
+        <p><strong>Outcome? : </strong>Web never improves.</p>
+    </ul>
+    Neither option was acceptable.
+    So we needed a solution, where browsers adapt differently for old websites and new ones. <br><br><strong>THE ONLY POSSIBLE SOLUTION:</strong><br>
+    <br>
+    Browsers decided:<br><br>If website is <strong>OLD:</strong><br>
+    <blockquote>Keep old buggy behavior</blockquote>If website is <strong>NEW:</strong><br><blockquote>Use modern standard rules.</blockquote>
+    So how does the Browser <i>decide</i> if it should keep old buggy behaviour or use modern standard rules? With that single right you begin your HTML file with:
+    </p>
+    <pre><code>&lt;!DOCTYPE html&gt;</code></pre>
+    <p>And if this line is present:
+    <ul>
+        <li>The website is rendered in <strong>Standard mode.</strong></li>
+    </ul>
+        <p>And if that line is missing,</p>
+    <ul>
+        <li>The website is rendered in <strong>Quirks Mode.</strong></li>
+    </ul>
+    If that still sounds confusing, let's say i write something like,
+    </p>  
+    <pre><code>
+    &lt;div style="width:200px; padding:20px"&gt;
+        Hello World!
+    &lt;/div&gt;
+    </code></pre> 
+    <p>The old browser thinks that the entire width should be 200 pixels only. So it allocates width as 200 pixels that includes padding and border. But modern browsers follow the standard.<br>
+    </p> 
+    <table border="1">
+        <tr>
+            <td>
+                Total width=200px(content)<br>+ 20px left padding<br>+20px right padding<br>+ 10px left border<br>+ 10px right border<br>=260px total. <br>
+            </td>
+        </tr>
+    </table>
+    <p>So box becomes wider, layout shifts. Same HTML, Different result</p>
+    <p>The conclusion? With that single line, you force the browser to render the html document in <strong>STANDARD MODE.</strong> Here is something important again to note: 
+    <ul>
+        <li>It is not an HTML tag</li>
+        <li>Not part of the DOM</li>
+        <li>So not a node too</li>
+        <li>It is not obviously rendered.</li>
+    </ul>
+    So what is it exactly? We term it <strong>Parser derivate. </strong>A parser is a program inside the browser that reads the HTML text from top to bottom and builds the <strong>DOM</strong> while reading it. A parser directive tells the parser, how the document should be read. So DOCTYPE is not in DOM. It affects DOM interpretation. 
+    </p>
+    <p>Apart from <strong>Standard mode </strong>and <strong>Quirks mode </strong>, there is also another mode. it is, <strong>Almost Standard mode.</strong> Images in tables may behave differenly, Otherwise, it is same as Standard mode.</p>
+    <h4>WHAT HAPPENS INTERNALLY WHEN BROWSER SEES IT?</h4>
+    <p>
+    When HTML bytes arrive, <br>
+    Browser receives,
+    <table border="1">
+        <tr>
+            <td>3C 21 44 4F 43 54 59 50 45 20 68 74 6D 6C 3E</td>
+        </tr>
+    </table>
+    <br>
+    Which would be decoded as &lt;!DOCTYPE html&gt;
+    <br><br>
+    HTML follows <strong>HTML Living Standard Algorithm</strong> And that means, it doesn't use strict rules and throws error like any other programming languages. It was created with the aim of being flexible. You would have noticed that even with a code with errors, the webpage would have still been displayed with the right part of code being displayed perfectly. <br>The parser itself is a <strong>State machine.</strong> A state machine
+    <ol>
+        <li>Starts at a particular state.</li>
+        <li>Reads one character at at time</li>
+        <li>Decides next state based on:
+            <ul>
+                <li>Current state</li>
+                <li>Characted read</li>
+            </ul>
+        </li>
+    </ol>
+    The parser always starts in, <strong>Data state</strong>. In the data state,every character read is considered as plain text.<br>But as soon as the parser sees the <strong>'&lt;'</strong>, It switches to <strong>Tag open state.</strong><br>Reads the <strong>'!'</strong> and switches to <strong>Markup Declaration Open State.</strong><br>Reads <strong>'DOCTYPE'</strong> and switches to <strong>DOCTYPE Parsing State</strong><br>Internally a DOCTYPE token will be created. It is not a node, and it used only by the <i>parser.</i> So everything u write after it will be rendered in <strong>Standard mode.</strong>
+    <br><br>
+    So you almost know now, how the parser works, 
+    <fieldset>
+        Bytes -> Characters -> Tokens
+    </fieldset>
+    and you know what?
+    Every other HTML tag's intial stages are the same. To be parsed and rendered, the contents will be converted to bytes, read character by character by state machine, then tokenised, but here is the difference.
+    <br><br>
+    Every other HTML tag undergoes 2 more additional steps.
+    <fieldset>
+        Bytes -> Characters -> Tokens -> Nodes -> DOM tree
+    </fieldset>
+    As promised in the blog written before this,
+    <a href="Build01.html">The Web Universe </a>I will write in detail about DOM, something that almost confuses most of the beginners. 
+</p>
+<h3>DOM</h3>
+<p>DOM stands for <strong>Document Object Model.</strong> Its nothing but a tree representation of the HTML file you write. The root of the tree is <strong>document</strong><br><br>JavaScript can interact with DOM. So just try this, On your browser, right click somewhere and from the list that appears, click on <strong>Inspect</strong>. On the top you would notice many tab-like ones, click on <strong>Console</strong>. Type something like this on the console.<br><br> <code>document.title</code>. <br><br>You would notice your title of HTML document being displayed as output on the console. By interacting, i also mean that the DOM objects can be directly modified with JavaScript. Just try this. <br><br><code>document.title="Hello World"</code><br><br>you would notice the title of webpage changing. When you do this, the DOM node itself is modified on the memory. So now i guess you would be able to understand <strong>Why this DOM is needed in first place.</strong> If the HTML doc remained as plain text, it wouldn't be able to <strong>respond </strong>to these kinds of events in first place. Modification with JavaScript would have been something almost impossible.<br><br>The <strong>bytes </strong>to <strong>character </strong>stage is called <strong>Decoding.</strong> <br>The conversion of <strong>character</strong> to <strong>Tokens </strong>is called <strong>Tokenisation.</strong> Tokens are meaningful units. Tokenizers understand syntax and helps in structural construction of the DOM tree. As you already know HTML tokenizers are implemented using <strong>State machine. </strong> I would probably write about all states that HTML State machine classifies a character into in some other blog after gaining a deeper intuition.<br>The next stage would be <strong>DOM creation. </strong><br>When a node is created it could be of any of the following types:
+<ul>
+    <li>Document (root controller object of entire DOM)</li>
+    <li>DocumentType node (!DOCTYPE html)</li>
+    <li>Element node (&lt;body&gt;, &lt;p&gt; &lt;div&gt;)</li>
+    <li>Text Node (The "Hello World" from &lt;p&gt; Hello World &lt;/p&gt;)</li>
+    <li>Comment node (All comments <!-- -->)</li>
+    <li>Document Fragment node (Its a DOM container node silently working behind the curtain, so that browser doesn't recalculate layout, repaint everytime a new DOM node is created. Builds everything off-screen then insert it all for once.)</li>
+    <li>Attribute node (class="x")</li>
+    <li>Processing Instruction (XML-specific instruction nodes)</li>
+</ul>
+And don't worry it's mot rocket science. Each DOM node is just a <strong>C++ object, </strong>with <strong>pointers</strong> to parent and children and takes memory.</p>
+
+<code><h2>&lt;html lang="en"&gt;</h2></code>
+<p>This is the root DOM node for all the upcoming nodes. lang is an attribute and lang="en" helps <strong>Browser translation algorithms.</strong> Since i had already explained the in-depth operation of a parser, not gonna repeat it again on how this would be parsed.</p>
+<code><h2>&lt;head&gt;</h2></code>
+<p>This is parsed before anything is rendered, because here is where we define the style. There is a huge differentiation between <i>style</i> and <i>layout</i>. Style is how an element appears on the screen and Layout is how an element is placed on the screen.</p>
+<code><h2>&lt;meta charset="UTF-8"&gt;</h2></code>
+<p>Encoding is how text is stored and understood by computer, UTF-8 supports all languages, emojis. This decides how characters are represented internally. Without this line, the browser guesses the encoding, which can fail for emojis, other languages, accented letters. But when i experimented, i noticed that most modern browsers guess the encoding right😅. So this line is optional. But a good developer goes for best practices, so you know what to do!</p>
+<p>Blink engine is the one that parses HTML into DOM and CSS into CSSOM, builds the render tree from DOM+CSSOM, performs layout (calculate sizes and positions of elements), paints and composite layers (draws the visible pixels we see)
+How does blink engine parse <meta charset= > internally?<br> The same principle.
+The browser read .html as byte stream, Hello is stored as bytesH -> 0x48, e -> 0xC3 0xA9, l -> 0x6C.
+Blink looks for <meta charset> very early in the file so step 2 is determining encoding.
+Then parses HTML into tokens &lt;html&gt;, &lt;head&gt; &lt;title&gt; &lt;body&gt; all becomes tokens, text nodes are interpreted using the encoding specified into &lt;meta charset= &gt;,then tokens are converted into DOM nodes, DOM is correctly built including unicode characters
+Not that: &lt;meta charset= &gt; shd be present within first 1024 bytes of teh document, if there r multiple ones specified, first one wins.</p>
+<code><h2>&lt;title&gt;</h2></code>
+<p>This is the Browser tab name. The Bookmark name. This is also the <strong>"Page title</strong> used in the search engine previews. Internally, as explained earlier, it updates, <code>document.title</code></p>
+
+<code><h2>&lt;body&gt;</h2></code>
+<p>All that you were doing till now, where not rendered. Here is where the contents that visually appear on your screen. 
+<br>
+<code><h3>&lt;h1&gt;Hello World &lt;/h1&gt;</h3></code>When browser reads this, Blink engine immediately creates a DOM node, Attach it to the <strong>body.</strong> Create a layout box for it, and assign a <strong>default CSS user-agent stylesheet</strong> that has specific CSS rules. So even if you didnt write CSS, the browser already wrote some for you. </p>
+
+<p>h1 is a block level element meaning it starts on a new line and takes up the full width available. <br><br>Block level elements affects vertical flow layout, the stacking is vertical flow layout (Heading, then paragraph).<br><br>
+Inline elements are opposite to block level elements (Dont start on a new line, dont take up entire width, just sits with other elements on the row) span, strong, &lt;b&gt;, &lt;i&gt; are all inline elements.
+
+<p>So the next time you see a code that looks something like:
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Lecture 2 Demo&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Hello World&lt;/h1&gt;
+    &lt;p&gt;This is a basic HTML document.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</p>
+<h2>
+    You know everything that happens behind the curtain that beautifully renders your content on screen.
+</h2>
+</body>
+</html>
