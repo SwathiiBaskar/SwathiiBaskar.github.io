@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>LookUp</title>
+    </head>
+    <style>
+        body{
+            background-color: black;
+            color: whitesmoke
+        }
+    </style>
+    <body>
+        <h1>HTML Base Structure as a System Contract</h1>
+        <h2>Unravelling the <strong>Protocol-level </strong>agreement between five independent systems</h2>
+        <p>Every HTML doc contains a base structure that looks like: </p>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>Ever wondered why is there a need to specify all these? Why is this the base structure? Why should you even specify each of these in any HTML doc? the answer you deserve to know is all this blog is about!</p>
+<p>When a browser receives a HTML document, it doesn't treat it as a simple text file. In fact it cannot afford to. Had you read my earlier blog,
+    <a href="Build02.html">Browser Parser Internals</a>, you would have known how an HTML doc is parsed and rendered, end to end. If you had not checked that, I highly recommend you to give that a read and get back to this for more clear understanding.<br><br>
+So now you might know everything that happens within a browser, to parse and render your HTML doc. Getting back to the base structure internals. </p>
+<p>You might have thought that the base structure is just a stylish choice for authors or maybe a universal structure for developers to understand the code written by various authors. Maybe that's what i thought too initially. But nooooo! It seems to be a <strong>protocol-level contract </strong>that allows multiple independent browser subsystems to operate concurrently without stepping on each other. For a very simple and quick revision, Whenever a HTML doc arrives from the Server, to the browser a stream of bytes is sent to be decoded (byte stream), then the HTML is parsed, JS is executed, required resources are fetched and pixels are painted on screen. Thats the basic principle we all know! However can this all be done by single subsystem? to <i>Decode, parse, render, connect runtime and network?</i> All at once? And for that reason we have 5 independent subsystems, that work concurrently. Note that the subsystems dont operate <i>sequentially</i> rather <i>concurrently.</i></p>
+<p>And this contract between the subsystems,
+    <ul>
+        <li>Document</li>
+        <li>Parser</li>
+        <li>Renderer</li>
+        <li>Runtime (CSS + JS)</li>
+        <li>Network</li>
+    </ul>
+    put on a few hard constraints:
+
+    So assume, a server sending byte-streams to browser. If every Browser decodes that differently, how will a website look on each browser? So what's the <strong>first major constraint?</strong> Given the same byte stream to every browser, they must produce the same <strong>Render tree</strong> (DOM+CSSOM) and <strong>Execution order,</strong> so that universally, it is parsed and rendered the same way by every browser. <br>So the HTML base structure, should be,
+</p>
+<h3>DETERMINISTIC</h3>
+<fieldset>
+    <legend>Deterministic</legend>
+    Same input -> Same steps -> Same result. Always!
+</fieldset>
+<p>No BROWSER-SPECIFIC behaviour. Both Browser-A and Browser-B, when they receive the exact same byte-stream, they must build the same DOM, apply the same CSS, and execute scripts in the same order. If not, the web is broken.</p>
+<p> A specific question to my reader! What do you think naturally threatens <strong>DETERMINISM</strong>?</p>
+<p>The parser, cannot wait until the entire byte stream arrives. Byte stream arrive in multiple batches. So the browser has to decide, 
+    <ul>
+        <li>Should I decode now?</li>
+        <li>Should I apply CSS now?</li>
+        <li>Should i apply JS now?</li>
+    </ul>
+If info appears late, then browsers may disagree on how long to wait! <strong>Partial Network Delivery </strong>is one of the major threats.
+<br><br>also, let's assume this is not the base structure we follow and our code looks something like:. 
+<pre><code>&lt;p&gt;Hello&lt;/p&gt;
+&lt;meta charset="utf-16"&gt;
+</code></pre>
+What must happen internally?<br>As soon as browser receives &lt;p&gt;Hello&lt;/p&gt;, to even recognise, <strong>H</strong>, it must <strong>decode bytes.</strong> But decoding requires knowing the characterset right? However in our example, Charset appears after the text. So the browser is forced to:
+<ul>
+    <li>guess an encoding</li>
+    <li>or buffer</li>
+    <li>or re-decode</li>
+</ul>
+ifferent browsers would make decisions differently. Once text is decoded wrong, Tokenisation differs, DOM text nodes differ, so rendering also differs. In this case, <strong>Determinism is already broken.</strong><br><br>
+This is exactly why the &lt;head&gt; exists. It is not for humans (yeah now you know why!), it is for the <strong>parser</strong>. So with this, all instructions that affect how the document is interpreted must thus appear before any renderable content. And that's not <i>style.</i> It is a <strong>hard execution constraint.</strong>. So if head appears before body, <strong>Encoding</strong> will be fixed before <strong>Decoding.</strong> It is the head section in which CSS layout is described. CSS layout is thus known before layout. So no re-interpretation of already painted content. Base URL is also known before resource allocation.<br><br>
+<code>&lt;base href="/assets/"&gt;</code>
+<br><br>So <i>head</i> is a <strong>DETERMINISM FIREWALL.</strong><br><br>
+Okay, so we decoded one of the reasons for the presence of this structure that explains why encoding must happen decoding or more specifically why &lt;head&gt; should be present before &lt;body&gt;<br><br>
+Moving on with understanding of another intention behind this design.<br>
+I am sure you know that the browser can't wait for the entire HTML file, then parse it all at once. Because the network is slow, pages are large, and users also expect <strong>progressive rendering.</strong> So the browser, must be able to parse left-to-right, one byte at a time, making decisions without seeing seeing the future and most importantly, <strong>without rewinding.</strong> This introduces us to a new term,
+</p>
+<h3>STREAM-PARSEABLE</h3>
+<p>It is impossible to rewind already-consumed bytes. Also cannot wait for the entire document. And that means, once a byte is consumed, it is gone!Here is something truly important to understand. Parsing is not just recognising syntax, As explained previously, at every moment the parser is put in a highly difficult state in which it should decide the current action (like should it decode now, apply CSS or JS, if a content is metadata or actual content, if the content affects layout?) It has too many questions at each state and have to critically decide based on <strong>context.</strong> We know that the parser is a <strong>finite-state </strong>machine. its behaviour depends on, 
+<ul>
+    <li>current state</li>
+    <li>current inserion mode</li>
+    <li>current element stack</li>
+</ul>
+So when it sees a token, it must already know what phase of the document it is in. HTML gives the parser <strong>structural phases</strong> with the base structure.
+<pre><code>
+&lt;html&gt;
+    &lt;head&gt; &lt;/head&gt; &lt;!--Interpretation rules phase--&gt;
+    &lt;body&gt; &lt;/body&gt; &lt;!--Rendering phase--&gt;
+&lt;/html&gt;
+</code></pre>
+When the parser sees the &lt;html&gt;, It knows that it is root of every other upcoming nodes. So no need to guess or create multiple nodes (that dont form a expected parent-child relationship), While inside &lt;head&gt;, parser knows, that the tokens here affect the future contents, and therefore block render tree creation and delay painting. Because technically no visible contant has started yet! Once body begins, parser knows that it's time to pass on ownership to renderer that's core job is to paint pixels. As per the style mentioned in head, pixels will be painted here on the body. Thus with a standard structure like this, we enable a <strong>finite state machine with no backtracking.</strong>
+<br><br>Lets develop the intuition behind the next reason, imagine a browser refusing to parse and render old versions of HTML files, <strong>HTML v1 sites stop working. Rewrite old pages.</strong> We already know that the old pages, dont follow the standard mode. So if something like what i stated ever happened, The web would die😂. Early HTML was loosely-specified and considered incorrect. There could be code with no starting and closing html, head and body tags. It could even be something as brutal as this, 
+
+<pre><code>&lt;font color=red&gt;HELLO</code></pre>
+and you know what's wrong here! There is no closing font tag, no html, body or head, Invalid attribute syntax by modern rules. Yet, this must <strong>still work.</strong> because millions of pages like this already exist. When parsing HTML, if required structural elements are missing, the the browser must insert them implicitly. This is exactly what is called, 
+</p>
+<h3>BACKWARD COMPATIBLE</h3>
+<p>A browser build today, must still render pages correctly, which are written decades ago, even if those pages are malformed. <br><br>Moving on, Rendering is something that's highly expensive. It cannot be backtracked. Rendering requires CSSOM tree to be constructed beforehand, layout tree, and computed styles. Thus anything that affects rendering must be known beforehand. Once pixels are painted, it cannot be reverted. All those styles, fonts, layout rules everything should be known before hand so that, it is </p>
+<h3>RENDER-SAFE</h3>
+<p>So the renderer assumes, once the body starts, It can safely build layout boxes. Every late &lt;style&gt; would invalidate layout. This is exactly why &lt;style&gt; is allowed in &lt;body&gt; but discouraged! Browser delays paint until head is processed. <br><br>Understanding the brutal network reality. When you request a page, the browser does not just download HTML, It must also fetch,
+<ul>
+    <li>CSS</li>
+    <li>JS</li>
+    <li>fonts</li>
+    <li>images</li>
+    <li>icons</li>
+    <li>APIs</li>
+</ul>
+which are likely present on most websites. Each fetch involves, 
+=<ol>
+    <li>DNS lookup</li>
+    <li>TCP handshake</li>
+    <li>Request -> Response</li>
+</ol>
+That's hundreds of milliseconds per origin. 
+So performance depends on,
+<strong>How early the Browser knows what it will need!</strong>
+</p>
+    </body>
+</html>
